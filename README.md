@@ -2,7 +2,7 @@
 Exam title:promotion examination 
 course name: python
 student number:202510132052
-Academic purpose: Promotion exam going to 3rd year
+
 
 # Exam instructions 
 Exam instructions will be added later

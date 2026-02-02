@@ -1,7 +1,7 @@
 # Promotion exam information 
 Exam title:promotion examination 
 course name: python
-student number:202510132052
+student number:202510132052 
 
 
 # Exam instructions 

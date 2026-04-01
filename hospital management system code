@@ -1,0 +1,256 @@
+# HOSPITAL MANAGEMENT SYSTEM
+
+patients = {}
+
+
+# -------------------- ADD PATIENT --------------------
+def add_patient():
+    patient_id = input("Enter Patient ID: ")
+
+    if patient_id in patients:
+        print("Patient ID already exists!")
+        return
+
+    name = input("Enter Full Name: ")
+    age = int(input("Enter Age: "))
+    gender = input("Enter Gender: ")
+    diagnosis = input("Enter Diagnosis: ")
+
+    treatments = {}
+
+    print("Enter at least 2 treatments")
+    for i in range(2):
+        treatment_name = input(f"Enter treatment {i+1} name: ")
+
+        while True:
+            try:
+                cost = float(input(f"Enter cost for {treatment_name}: "))
+                if cost <= 0:
+                    print("Cost must be positive!")
+                else:
+                    break
+            except:
+                print("Invalid input. Enter a number.")
+
+        treatments[treatment_name] = cost
+
+    patients[patient_id] = {
+        "name": name,
+        "age": age,
+        "gender": gender,
+        "diagnosis": diagnosis,
+        "treatments": treatments
+    }
+
+    print("Patient added successfully!\n")
+
+
+# -------------------- VIEW ALL PATIENTS --------------------
+def view_all_patients():
+    if not patients:
+        print("No patients found.\n")
+        return
+
+    print("\n--- ALL PATIENTS ---")
+    for pid, details in patients.items():
+        print(f"ID: {pid} | Name: {details['name']} | Diagnosis: {details['diagnosis']}")
+    print()
+
+
+# -------------------- VIEW PATIENT REPORT --------------------
+def view_patient_report():
+    patient_id = input("Enter Patient ID: ")
+
+    if patient_id not in patients:
+        print("Patient not found!\n")
+        return
+
+    patient = patients[patient_id]
+
+    print("\n--- PATIENT REPORT ---")
+    print(f"ID: {patient_id}")
+    print(f"Name: {patient['name']}")
+    print(f"Age: {patient['age']}")
+    print(f"Gender: {patient['gender']}")
+    print(f"Diagnosis: {patient['diagnosis']}")
+
+    total = 0
+    print("\nTreatments:")
+    for treatment, cost in patient["treatments"].items():
+        print(f"{treatment}: {cost}")
+        total += cost
+
+    print(f"\nTOTAL BILL: {total}\n")
+
+
+# -------------------- UPDATE PATIENT --------------------
+def update_patient():
+    patient_id = input("Enter Patient ID: ")
+
+    if patient_id not in patients:
+        print("Patient not found!\n")
+        return
+
+    patient = patients[patient_id]
+
+    print("\n1. Update Diagnosis")
+    print("2. Add Treatment")
+    print("3. Update Treatment Cost")
+    print("4. Remove Treatment")
+
+    choice = input("Choose option: ")
+
+    if choice == "1":
+        new_diag = input("Enter new diagnosis: ")
+        patient["diagnosis"] = new_diag
+        print("Diagnosis updated!")
+
+    elif choice == "2":
+        treatment_name = input("Enter treatment name: ")
+
+        while True:
+            try:
+                cost = float(input("Enter cost: "))
+                if cost <= 0:
+                    print("Cost must be positive!")
+                else:
+                    break
+            except:
+                print("Invalid input.")
+
+        patient["treatments"][treatment_name] = cost
+        print("Treatment added!")
+
+    elif choice == "3":
+        treatment_name = input("Enter treatment to update: ")
+
+        if treatment_name in patient["treatments"]:
+            while True:
+                try:
+                    cost = float(input("Enter new cost: "))
+                    if cost <= 0:
+                        print("Cost must be positive!")
+                    else:
+                        break
+                except:
+                    print("Invalid input.")
+
+            patient["treatments"][treatment_name] = cost
+            print("Cost updated!")
+        else:
+            print("Treatment not found!")
+
+    elif choice == "4":
+        treatment_name = input("Enter treatment to remove: ")
+
+        if treatment_name in patient["treatments"]:
+            del patient["treatments"][treatment_name]
+            print("Treatment removed!")
+        else:
+            print("Treatment not found!")
+
+    else:
+        print("Invalid option!")
+
+    print()
+
+
+# -------------------- DELETE PATIENT --------------------
+def delete_patient():
+    patient_id = input("Enter Patient ID: ")
+
+    if patient_id in patients:
+        del patients[patient_id]
+        print("Patient deleted successfully!\n")
+    else:
+        print("Patient not found!\n")
+
+
+# -------------------- SEARCH PATIENT --------------------
+def search_patient():
+    search = input("Enter Patient ID or Name: ").lower()
+
+    found = False
+
+    for pid, details in patients.items():
+        if search == pid.lower() or search in details["name"].lower():
+            print(f"\nFound Patient: {pid} | {details['name']} | {details['diagnosis']}")
+            found = True
+
+    if not found:
+        print("No matching patient found.\n")
+    else:
+        print()
+
+
+# -------------------- HOSPITAL STATISTICS --------------------
+def hospital_statistics():
+    if not patients:
+        print("No data available.\n")
+        return
+
+    total_patients = len(patients)
+    total_revenue = 0
+
+    highest_bill = None
+    lowest_bill = None
+    highest_patient = ""
+    lowest_patient = ""
+
+    for pid, details in patients.items():
+        bill = sum(details["treatments"].values())
+        total_revenue += bill
+
+        if highest_bill is None or bill > highest_bill:
+            highest_bill = bill
+            highest_patient = details["name"]
+
+        if lowest_bill is None or bill < lowest_bill:
+            lowest_bill = bill
+            lowest_patient = details["name"]
+
+    print("\n--- HOSPITAL STATISTICS ---")
+    print(f"Total Patients: {total_patients}")
+    print(f"Total Revenue: {total_revenue}")
+    print(f"Highest Bill: {highest_patient} ({highest_bill})")
+    print(f"Lowest Bill: {lowest_patient} ({lowest_bill})\n")
+
+
+# -------------------- MAIN MENU --------------------
+def main():
+    while True:
+        print("===== HOSPITAL MANAGEMENT SYSTEM =====")
+        print("1. Add Patient")
+        print("2. View All Patients")
+        print("3. View Patient Report")
+        print("4. Update Patient")
+        print("5. Delete Patient")
+        print("6. Search Patient")
+        print("7. Hospital Statistics")
+        print("8. Exit")
+
+        choice = input("Enter choice: ")
+
+        if choice == "1":
+            add_patient()
+        elif choice == "2":
+            view_all_patients()
+        elif choice == "3":
+            view_patient_report()
+        elif choice == "4":
+            update_patient()
+        elif choice == "5":
+            delete_patient()
+        elif choice == "6":
+            search_patient()
+        elif choice == "7":
+            hospital_statistics()
+        elif choice == "8":
+            print("Exiting system... Goodbye!")
+            break
+        else:
+            print("Invalid choice! Try again.\n")
+
+
+# -------------------- RUN PROGRAM --------------------
+main()
